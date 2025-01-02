@@ -8,14 +8,10 @@ import "react-toastify/dist/ReactToastify.css";
 import jsPDF from "jspdf";
 import { Play, Pause, RotateCcw, Rewind, FastForward } from "lucide-react";
 import LanguageDropdown from "@/components/LanguageDropdown";
-import Navbar from "@/components/navbar";
-import { useRecoilState } from 'recoil';
-import { logoutState } from '../../store/atom';
 
 export default function Read() {
-  
+  const [logout, setLogout] = useState(false);
   const [imageStatus, setImageStatus] = useState("");
-  const [isLoggedOut, setIsLoggedOut] = useRecoilState(logoutState);
   const [devices, setDevices] = useState([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState("");
   const videoRef = useRef(null);
@@ -154,17 +150,21 @@ export default function Read() {
   };
 
   const sendRecording = () => {
+    if (isRequestPending) {
+      console.log("Please wait for the current request to complete");
+      return;
+    }
+
+    setIsRequestPending(true);
     const blob = new Blob(audioChunksRef.current, { type: "audio/wav" });
     const formData = new FormData();
     formData.append("file", blob, "recording.wav");
-
     formData.append("information", textState);
-    // Append other form data as needed
 
     // Play waiting audio
-    const waitingAudio = new Audio("/audio/waiting.mp3"); // Path to your waiting audio file
+    const waitingAudio = new Audio("/audio/waiting.mp3");
     waitingAudio.play();
-    waitingAudioRef.current = waitingAudio; // Store the waiting audio in ref
+    waitingAudioRef.current = waitingAudio;
 
     axios
       .post("https://jyoti-ai.com/api/process_question", formData, {
@@ -374,16 +374,32 @@ export default function Read() {
     }
   };
 
-  
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("https://jyoti-ai.com/api/logout", {
+        method: "GET",
+        credentials: "include",
+      });
+      if (response.ok) {
+        setLogout(true);
+        setTimeout(() => {
+          notify();
+        }, 200);
+      } else {
+        throw new Error("Logout unsuccessful");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
 
-useEffect(() => {
+  useEffect(() => {
     const checkAuth = async () => {
       try {
         const response = await axios.get("https://jyoti-ai.com/api/me", {
           withCredentials: true,
         });
         if (response.status === 200) {
-          console.log("Authenticated")
         } else {
           router.push("/");
         }
@@ -392,12 +408,9 @@ useEffect(() => {
         router.push("/");
       }
     };
-  
-    // Only run checkAuth if logout state is true or undefined
-    if (isLoggedOut) {
-      checkAuth();
-    }
-  }, []);
+
+    checkAuth();
+  }, [logout, router]);
 
   const getSummary = () => {
     if (isRequestPending) {
@@ -727,7 +740,30 @@ useEffect(() => {
 
   return (
     <div className="bg-gray-100 ">
-      <Navbar></Navbar>
+      <nav>
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <a className="text-4xl font-bold text-red-600" href="#">
+              Jyoti AI
+            </a>
+            <div className="flex items-center">
+              <button
+                className="text-black hover:text-white border border-gray-400 rounded-lg px-2 py-1 mr-2 text-md font-semibold transition-all duration-200 hover:bg-gray-800 hover:border-gray-800"
+                onClick={() => router.push("/Profile")}
+              >
+                Profile
+              </button>
+              <button
+                className="text-black hover:text-white border border-gray-400 rounded-lg px-2 py-1 text-md font-semibold transition-all duration-200 hover:bg-gray-800 hover:border-gray-800"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       <div className="flex flex-col md:flex-row min-h-screen">
         {/* Camera Module - Full width on mobile, half on desktop */}
         <div className="w-full md:w-1/2 p-4 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-200">

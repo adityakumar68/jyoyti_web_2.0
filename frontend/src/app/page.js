@@ -1,13 +1,25 @@
 "use client";
 
-import { FaInfoCircle, FaLightbulb, FaGift, FaNewspaper } from 'react-icons/fa';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import { Navigation } from 'swiper/modules';
-import 'swiper/css/bundle';
+import { FaInfoCircle, FaLightbulb, FaGift, FaNewspaper } from "react-icons/fa";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Navigation, Autoplay } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useRef } from "react";
+import { Twitter, Facebook, Instagram, Linkedin } from "lucide-react";
+import { PaymentIcon } from "react-svg-credit-card-payment-icons";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/bundle";
+import Navbar from "../components/navbar";
+import NewsArticles from "../components/newsArticles";
+import VideoGallery from "../components/userTestimonials";
+import Form from "../components/form";
+import UserFeedbacks from "@/components/userFeedback";
+import ThreeAwardSlider from "@/components/awards";
+import JyotiAIAbout from "@/components/about";
+import Head from 'next/head';
 
 const Section = ({ icon, title, description }) => (
   <div className="flex flex-col items-center text-center w-48">
@@ -18,210 +30,356 @@ const Section = ({ icon, title, description }) => (
 );
 
 export default function Home() {
-  const sections = [
-    {
-      icon: <FaInfoCircle />,
-      title: 'About Torchit',
-      description: 'A social venture dedicated to the upliftment, advancement, and empowerment of the differently abled',
-    },
-    {
-      icon: <FaLightbulb />,
-      title: 'About Innovation',
-      description: 'Technological innovation lies at the heart of our initiatives aimed at developing IoT, AI & ML based solutions for improving the quality of life of persons with disabilities',
-    },
-    {
-      icon: <FaGift />,
-      title: 'Gift Now',
-      description: 'Become the reason for a blind person’s smile today; contribute to our ‘Donate for a Cause’ program',
-    },
-    {
-      icon: <FaNewspaper />,
-      title: 'News & Media',
-      description: 'Get access to latest news & updates about TorchIt and our impact in the lives of the differently abled',
-    },
-  ];
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const swiperRef = useRef(null);
+
+  const NavigationButton = ({ direction }) => {
+    const isLeft = direction === "left";
+
+    const handleClick = () => {
+      if (isLeft) {
+        swiperRef.current.swiper.slidePrev();
+      } else {
+        swiperRef.current.swiper.slideNext();
+      }
+    };
+
+    return (
+      <button
+        onClick={handleClick}
+        className={`
+          absolute top-1/2 z-10 transform -translate-y-1/2
+          ${isLeft ? "left-4" : "right-4"}
+          w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm
+          flex items-center justify-center
+          transition-all duration-300 ease-in-out
+          hover:bg-white/20 hover:scale-110
+          group shadow-lg hover:shadow-xl
+          border border-white/10
+        `}
+      >
+        {isLeft ? (
+          <ChevronLeft className="w-6 h-6 text-white transition-transform group-hover:-translate-x-1" />
+        ) : (
+          <ChevronRight className="w-6 h-6 text-white transition-transform group-hover:translate-x-1" />
+        )}
+      </button>
+    );
+  };
 
   const slides = [
     {
-      image: '/images/sarthi.jpg',
-      text: "A company By the Blind, For the Blind & Of the Blind",
-      description: "TorchIt is brewing a microsystem within the organisation where the Differently Abled community is not only empowered through using modern & effective products, but it tries to integrate as many Differently Abled people in its workforce, thereby giving more freedom & power to the community"
+      image: "/images/jyotiAI.jpg",
     },
     {
-      image: '/images/sarthi.png',
-      text: "A company By the Blind, For the Blind & Of the Blind",
-      description: "TorchIt is brewing a microsystem within the organisation where the Differently Abled community is not only empowered through using modern & effective products, but it tries to integrate as many Differently Abled people in its workforce, thereby giving more freedom & power to the community"
+      image: "/images/necessity.jpg",
     },
+    {
+      image: "/images/impact2.jpg",
+    },
+    {
+      image: "/images/hunnySir.jpg",
+    },
+    {
+      image: "/images/accessibility.jpg",
+    },
+    {
+      image: "/images/awards.jpg",
+    },
+
+    {
+      image: "/images/features.jpg",
+    },
+    {
+      image: "/images/glasses.jpg",
+    },
+    {
+      image: "/images/ring.jpg",
+    },
+    {
+      image: "/images/reader.jpg",
+    },
+
     // Add more slides as needed
   ];
 
   return (
-    <div className="flex flex-col min-h-screen overflow-auto">
-      <nav className="bg-white shadow">
-        <div className="container mx-auto px-6 py-4">
-          <div className="md:flex md:items-center md:justify-between">
-            <div className="flex items-center justify-between">
-              <a className="text-2xl font-bold text-gray-800 lg:text-3xl md:block" href="#">
-                Jyoti AI
-              </a>
-              <button id="menu-toggle" className="block md:hidden">
-                <svg className="h-6 w-6 text-gray-800" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} viewBox="0 0 24 24" stroke="currentColor">
-                  <path d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-            </div>
-            <div id="menu" className="hidden md:flex md:items-center md:w-auto">
-              <div className="text-sm md:flex-none">
-                <a className="block mt-4 md:inline-block md:mt-0 text-gray-800 hover:text-gray-900 mr-6" href="/Login">
-                  Login
-                </a>
-                <a className="block mt-4 md:inline-block md:mt-0 text-gray-800 hover:text-gray-900 mr-6" href="#">
-                  Buy Now
-                </a>
-                <a className="block mt-4 md:inline-block md:mt-0 text-gray-800 hover:text-gray-900" href="#">
-                  About Us
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-      
+    <>
+      <Head>
+        {/* Title */}
+        <title>Jyoti AI Pro: Smart Glasses for Accessibility</title>
+
+        {/* Meta Description */}
+        <meta name="description" content="Explore Jyoti AI Pro Smart Glasses with audio features and AI capabilities. Enhance accessibility, recognize objects, and achieve independence with cutting-edge technology. Buy now!" />
+
+        <meta name="keywords" content="AI smart glasses, accessibility glasses, Jyoti AI, audio glasses, assistive technology, smart eyewear, glasses for visually impaired, object recognition glasses" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        {/* Open Graph Meta Tags */}
+        <meta property="og:title" content="Jyoti AI Pro: Smart Glasses for Accessibility" />
+        <meta property="og:description" content="Empowering the visually impaired with AI glasses that recognize objects, text, and more." />
+        <meta property="og:image" content="https://www.yourwebsite.com/images/jyoti-ai-pro-glasses.jpg" />
+        <meta property="og:url" content="https://www.yourwebsite.com/" />
+        <meta property="og:type" content="website" />
+
+        {/* Twitter Card Meta Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Jyoti AI Pro: Smart Glasses for Accessibility" />
+        <meta name="twitter:description" content="Empowering the visually impaired with AI glasses that recognize objects, text, and more." />
+        <meta name="twitter:image" content="https://www.yourwebsite.com/images/jyoti-ai-pro-glasses.jpg" />
+
+        {/* Robots */}
+        <meta name="robots" content="index, follow" />
+        <meta name="DC.title" content="Jyoti AI Pro: Smart Glasses with AI Audio for Accessibility" />
+        <meta name="DC.creator" content="Jyoti AI Team" />
+        <meta name="DC.subject" content="AI-powered smart glasses for visually impaired users to gain independence and accessibility." />
+        <meta name="DC.description" content="Explore the innovative Jyoti AI Pro Smart Glasses, featuring AI audio, object recognition, and multilingual text reading." />
+        <meta name="DC.publisher" content="Jyoti AI" />
+        <meta name="DC.language" content="en" />
+
+      </Head>
+
+      {/* Main Content */}
+      <main>
+      <Navbar></Navbar>
+
       <div className="flex-grow">
+      <div className="w-full relative group">
         <Swiper
-          navigation={true}
-          modules={[Navigation]}
-          className="mySwiper"
+          ref={swiperRef}
+          modules={[Navigation, Autoplay]}
+          className="w-full"
+          onSlideChange={() => {
+            setIsTransitioning(true);
+            setTimeout(() => setIsTransitioning(false), 500);
+          }}
+          speed={800}
+          effect="fade"
+          loop={true}
+          autoplay={{
+            delay: 5000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          }}
+          touchEventsTarget="container"
+          threshold={5}
         >
           {slides.map((slide, index) => (
             <SwiperSlide key={index}>
-              <div className="relative w-full h-[92vh]">
-                <img src={slide.image} alt={`Slide ${index}`} className="object-cover w-full h-full" />
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center p-4">
-                  <h2 className="text-white text-4xl font-bold mb-4 text-center">{slide.text}</h2>
-                  <p className="text-white text-lg text-center">{slide.description}</p>
+              <div className="relative w-full flex items-center justify-center bg-black overflow-hidden">
+                {/* Dynamic height based on screen orientation and device */}
+                <div className="w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[92vh] relative">
+                  <img
+                    src={slide.image}
+                    alt={`Slide ${index}`}
+                    className={`
+                      absolute inset-0 w-full h-full object-contain
+                      transition-transform duration-700 ease-out
+                      ${isTransitioning ? "scale-105" : "scale-100"}
+                    `}
+                  />
+                  <div
+                    className={`
+                      absolute inset-0 bg-black/30
+                      flex flex-col items-center justify-center p-4
+                      transition-opacity duration-500
+                      ${isTransitioning ? "opacity-0" : "opacity-100"}
+                    `}
+                  >
+                    <h2
+                      className={`
+                        text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold 
+                        mb-2 md:mb-4 text-center px-4
+                        transform transition-all duration-700
+                        ${isTransitioning ? "translate-y-10 opacity-0" : "translate-y-0 opacity-100"}
+                      `}
+                    >
+                      {slide.text}
+                    </h2>
+                    <p
+                      className={`
+                        text-white text-sm sm:text-base md:text-lg text-center
+                        px-4 max-w-[90%] md:max-w-[80%] lg:max-w-[70%]
+                        transform transition-all duration-700 delay-100
+                        ${isTransitioning ? "translate-y-10 opacity-0" : "translate-y-0 opacity-100"}
+                      `}
+                    >
+                      {slide.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             </SwiperSlide>
           ))}
         </Swiper>
 
-        <div className="flex justify-around py-10">
-          {sections.map((section, index) => (
-            <Section
-              key={index}
-              icon={section.icon}
-              title={section.title}
-              description={section.description}
-            />
-          ))}
-        </div>
+        {/* Navigation buttons */}
+        <NavigationButton direction="left" />
+        <NavigationButton direction="right" />
+      </div>
+      </div>
+      <JyotiAIAbout></JyotiAIAbout>
+      <ThreeAwardSlider></ThreeAwardSlider>
+     
+      <NewsArticles></NewsArticles>
+      <VideoGallery></VideoGallery>
+      <Form></Form>
+      
 
-        <div className="relative flex justify-center items-center min-h-screen bg-gray-100">
-          {/* Background Video */}
-          <video
-            autoPlay
-            loop
-            muted
-            className="absolute w-full h-full object-cover"
-            type="video/mp4"
-          />
-
-          {/* Content */}
-          <div className="relative z-10 flex flex-col md:flex-row items-center text-center p-8 bg-white bg-opacity-75 rounded-lg shadow-lg max-w-5xl">
-            {/* Left half: Text content */}
-            <div className="flex flex-col items-start text-left p-4 md:w-1/2">
-              <h2 className="text-3xl font-bold mb-4">About Torchit</h2>
-              <p className="text-gray-700 mb-6">
-                Torchit is a Government of India aided social venture tech-startup that empowers persons with disabilities to lead a dignified, independent, and meaningful life through design and development of state-of-the-art technological innovations using Artificial Intelligence and Machine Learning.
+      <footer className="bg-gradient-to-r from-gray-900 to-black text-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {/* Company Information */}
+            <div className="space-y-4">
+              <h2 className="text-6xl font-bold text-red-500">torch-it</h2>{" "}
+              {/* Changed to red */}
+              <p className="text-gray-300 italic">
+                Empowering Vision Beyond Sight
               </p>
-              <button className="bg-green-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-green-700 mb-6">
-                ABOUT US
-              </button>
-              {/* Stats */}
-              <div className="flex flex-col md:flex-row justify-around w-full mt-6">
-                <div className="flex flex-col items-center mb-4 md:mb-0 md:mr-4">
-                  <span className="text-2xl font-bold text-blue-600">50000</span>
-                  <span className="text-gray-600">Lives impacted</span>
-                </div>
-                <div className="flex flex-col items-center mb-4 md:mb-0 md:mr-4">
-                  <span className="text-2xl font-bold text-blue-600">75</span>
-                  <span className="text-gray-600">Campaigns</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <span className="text-2xl font-bold text-blue-600">110+</span>
-                  <span className="text-gray-600">Partnerships Worldwide</span>
-                </div>
+              <div className="space-y-2 text-sm">
+                <p className="font-semibold text-red-500">Address:</p>{" "}
+                {/* Changed to red */}
+                <p>MV House, 703-708, BAPS Cir,</p>
+                <p>Bhadreshwar Society, Shahibag,</p>
+                <p>Ahmedabad, Gujarat 380004</p>
+              </div>
+              <div className="pt-4">
+                <p className="font-semibold text-red-500">Contact Us:</p>{" "}
+                {/* Changed to red */}
+                <p>
+                  Email:{" "}
+                  <a
+                    href="mailto:hello@torchit.in"
+                    className="hover:text-red-500 transition duration-300"
+                  >
+                    hello@torchit.in
+                  </a>
+                </p>{" "}
+                {/* Changed hover color */}
+                <p>Phone: +91 722 799 4043</p>
               </div>
             </div>
 
-            {/* Right half: Images */}
-            <div className="flex justify-center items-center p-4 md:w-1/2">
-              <div className="flex flex-col md:flex-row justify-center items-center space-x-4">
-                <img src='/images/Capture11.png' alt="Device 1" className="w-48 h-48 object-contain mb-4 md:mb-0 md:mr-4" />
-                <img src='/images/device2.png' alt="Device 2" className="w-32 h-32 object-contain" />
+            {/* Latest Posts */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-red-500">Latest Posts</h2>{" "}
+              {/* Changed to red */}
+              <ul className="space-y-4">
+                <li>
+                  <a
+                    href="https://www.linkedin.com/posts/torchit_meaningfulbusiness-2024mb100-mb100-activity-7258062685576065025-s6xy?utm_source=share&utm_medium=member_desktop"
+                    className="block p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition duration-300"
+                  >
+                    <h3 className="font-bold text-red-500">
+                      Happy to share, we have been recognised MB100 for Meaningful Business 2024. 
+                    </h3>{" "}
+                    {/* Changed to red */}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://www.linkedin.com/posts/torchit_jyotiai-unga79-pactforthefuture-activity-7243577282777239554-jsC0?utm_source=share&utm_medium=member_desktop"
+                    className="block p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition duration-300"
+                  >
+                    <h3 className="font-bold  text-red-500">
+                   JyotiAI has been awarded the prestigious SDG Digital Pioneers Award at the United Nations
+                    </h3>{" "}
+                    {/* Changed to red */}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://www.linkedin.com/posts/torchit_seoy-youngturks-changmakers-activity-7241040589658415104-CMA1?utm_source=share&utm_medium=member_desktop"
+                    className="block p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition duration-300"
+                  >
+                    <h3 className="font-bold text-red-500">
+                    We were honored to receive the Social Entrepreneur of the Year (SEOY)
+                    </h3>{" "}
+                  </a>
+                </li>
+              </ul>
+              <button className="bg-red-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-red-600 transition duration-300 mt-6">
+                {" "}
+                {/* Changed to red */}
+                Join Our Mission
+              </button>
+            </div>
+
+            {/* Social Media & Donations */}
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-red-500 mb-4">
+                  Connect With Us
+                </h2>{" "}
+                {/* Changed to red */}
+                <div className="flex space-x-4">
+                  <a
+                    href="https://x.com/torchitltd"
+                    className="text-gray-300 hover:text-red-500 transition duration-300"
+                  >
+                    <Twitter size={24} />
+                  </a>
+                  <a
+                    href="https://www.facebook.com/torchitt/"
+                    className="text-gray-300 hover:text-red-500 transition duration-300"
+                  >
+                    <Facebook size={24} />
+                  </a>
+                  <a
+                    href="https://www.instagram.com/mytorchit/?hl=en"
+                    className="text-gray-300 hover:text-red-500 transition duration-300"
+                  >
+                    <Instagram size={24} />
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/company/torchit/posts/?feedView=all"
+                    className="text-gray-300 hover:text-red-500 transition duration-300"
+                  >
+                    <Linkedin size={24} />
+                  </a>
+                </div>
+              </div>
+              <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h2 className="text-2xl font-bold text-red-500 mb-4">
+                  Support Our Cause
+                </h2>{" "}
+                {/* Changed to red */}
+                <p className="text-gray-300 mb-4">
+                  Your donation can make a difference in someone's life.
+                </p>
+                <button className="bg-red-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-red-600 transition duration-300 w-full">
+                  {" "}
+                  {/* Changed to red */}
+                  Donate Now
+                </button>
+                {/* Payment Icons */}
+                <div className="flex space-x-4 mt-6">
+                  {" "}
+                  {/* Adjusted padding and margin */}
+                  <PaymentIcon type="visa" format="flatRounded" width={100} />
+                  <PaymentIcon
+                    type="mastercard"
+                    format="flatRounded"
+                    width={100}
+                  />
+                  <PaymentIcon
+                    type="discover"
+                    format="flatRounded"
+                    width={100}
+                  />
+                  <PaymentIcon type="amex" format="flatRounded" width={100} />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <footer className="bg-black text-white p-6">
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Contact Information */}
-        <div>
-          <h2 className="text-xl font-bold mb-4">torch-it</h2>
-          <p>Empowering Vision Beyond Sight</p>
-          <div className="mt-4">
-            <p>Head Office (HO):</p>
-            <p>205, ABC 1, Opp. Waghbakri Tea Lounge, Off. CG Road</p>
-            <p>Ahmedabad - 380009</p>
-            <p>Email: hello@torchit.in</p>
-            <p>Phone: +91 722 799 4043</p>
-          </div>
-          <div className="mt-4">
-            <p>Manufacturing Office (MO):</p>
-            <p>703, M V House, Namaste Circle, Shahibaug</p>
-            <p>Ahmedabad - 380004</p>
-          </div>
+        <div className="text-center mt-12 text-gray-400 text-sm">
+          <p>© 2023-2024 jyotiAI – Torchit. All Rights Reserved.</p>
         </div>
-        
-        {/* Latest Posts */}
-        <div>
-          <h2 className="text-xl font-bold mb-4">Latest Posts</h2>
-          <ul>
-            <li className="mb-2"><a href="#" className="text-green-500">Dilipbhai: A Beacon of Hope</a></li>
-            <li className="mb-2"><a href="#" className="text-green-500">5 things you must know about TorchIt’s NorthEast India crusade</a></li>
-            <li className="mb-2"><a href="#" className="text-green-500">Saarthi: Carving a better future for thousands of visually impaired</a></li>
-          </ul>
-          <button className="bg-green-500 text-white px-4 py-2 mt-4">Click To Join Us</button>
-        </div>
-        
-        {/* Social Media & Donations */}
-        <div>
-          <h2 className="text-xl font-bold mb-4">@TorchitLtd</h2>
-          <div className="bg-gray-800 p-4 mb-4">
-            <p>Nothing to see here - yet</p>
-            <a href="#" className="text-blue-500">View on X</a>
-          </div>
-          <h2 className="text-xl font-bold mb-4">Donate Now</h2>
-          <div className="space-y-4">
-            <img src="" alt="PayPal Donate" className="w-32 mx-auto" />
-            <div className="flex justify-center space-x-4">
-              <img src="" alt="Visa" className="w-10" />
-              <img src="" alt="MasterCard" className="w-10" />
-              <img src="" alt="Discover" className="w-10" />
-              <img src="" alt="American Express" className="w-10" />
-            </div>
-            <img src="" alt="Paytm" className="w-32 mx-auto" />
-          </div>
-        </div>
-      </div>
-      <div className="text-center mt-6">
-        <p>All Right Reserved 2023-2024 @ jyotiAI – Torchit </p>
-      </div>
-    </footer>
+      </footer>
 
       <ToastContainer />
-    </div>
+      </main>
+    </>
   );
 }
